@@ -4,7 +4,12 @@ $regKey = 'HKLM:\SOFTWARE\Policies\Microsoft\Windows\Personalization'
 if (!(Test-Path -Path $regKey)) {
    $null = New-Item -Path $regKey
 }
-Set-ItemProperty -Path $regKey -Name LockScreenImage -value "C:\LockScreenImage\adapt.png"
-reg add "HKEY_CURRENT_USER\Control Panel\Desktop" /v Wallpaper /t REG_SZ /d C:\LockScreenImage\adapt.png /f
-Start-Sleep -s 10
-rundll32.exe user32.dll, UpdatePerUserSystemParameters
+# Get the path to the wallpaper image
+$imagePath = "C:\LockScreenImage\adapt.png"
+
+# Set the wallpaper for all users
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "Wallpaper" -Value $imagePath
+Set-ItemProperty -Path "HKLM:\SOFTWARE\Microsoft\Windows\CurrentVersion\Policies\System" -Name "WallpaperStyle" -Value "2" # 2 = Centered
+
+# Update the wallpaper immediately
+rundll32.exe user32.dll,UpdatePerUserSystemParameters
